@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Task from './Task';
+
 const TaskForm = ({ onAdd, projects, onCancel, selectedDate }) => {
   const [task, setTask] = useState({
     projectId: '',
@@ -47,6 +47,7 @@ const TaskForm = ({ onAdd, projects, onCancel, selectedDate }) => {
             value={task.label}
             onChange={(e) => setTask({...task, label: e.target.value})}
             className="w-full p-2 border rounded-md"
+            placeholder="Entrez le libellé de la tâche"
             required
           />
         </div>
@@ -68,6 +69,7 @@ const TaskForm = ({ onAdd, projects, onCancel, selectedDate }) => {
             value={task.comment}
             onChange={(e) => setTask({...task, comment: e.target.value})}
             className="w-full p-2 border rounded-md h-20"
+            placeholder="Commentaires optionnels..."
           />
         </div>
         <div className="flex gap-2">
