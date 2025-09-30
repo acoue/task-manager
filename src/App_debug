@@ -19,31 +19,61 @@ const App = () => {
 
         // Test des imports progressivement
         try {
-          console.log('📦 Test import DateAccordion...');
-          const DateAccordionModule = await import('./components/DateAccordion');
-          console.log('✅ DateAccordion importé avec succès');
+          // console.log('📦 Test import DateAccordion...');
+          // const DateAccordionModule = await import('./components/DateAccordion');
+          // console.log('✅ DateAccordion importé avec succès');
+
+          // console.log('📦 Test import Statistics...');
+          // const StatisticsModule = await import('./components/Statistics');
+          // console.log('✅ Statistics importé avec succès');
+
+          // console.log('📦 Test import ProjectManager...');
+          // const ProjectManagerModule = await import('./components/ProjectManager');
+          // console.log('✅ ProjectManager importé avec succès');
+
+          // setStep('Test des services LowDB...');
+
+          // console.log('🗄️ Test import database service...');
+          // const databaseModule = await import('./services/database');
+          // console.log('✅ Database service importé');
+
+          // console.log('🗄️ Test import task service...');
+          // const taskServiceModule = await import('./services/taskService');
+          // console.log('✅ Task service importé');
+
+          // console.log('🗄️ Test import project service...');
+          // const projectServiceModule = await import('./services/projectService');
+          // console.log('✅ Project service importé');
+           console.log('📦 Test import UI');
+          const ModalModule = await import('./components/UI/Modal');
+          const ConfigWarningModule = await import('./components/UI/ConfigWarning');
+          const ErrorDisplayModule = await import('./components/UI/ErrorDisplay');
+          const LoadingSpinnerModule = await import('./components/UI/LoadingSpinner');
+          const HeaderModule = await import('./components/UI/Header');
+          console.log('✅ UI importé avec succès');
+
+          console.log('📦 Test import components Task...');
+          const TaskFormModule = await import('./components/Task/TaskForm');
+          const TasksViewModule = await import('./components/Task/TasksView');
+          const TaskCardModule = await import('./components/Task/TaskCard');
+          const DayAccordionModule = await import('./components/Task/DayAccordion');
+          console.log('✅ Components Task importés avec succès');
 
           console.log('📦 Test import Statistics...');
-          const StatisticsModule = await import('./components/Statistics');
+          const StatisticsCardModule = await import('./components/Statistic/StatCard');
+          const StatItemModule = await import('./components/Statistic/StatItem');
+          const StatisticModule = await import('./components/Statistic/Statistics');
           console.log('✅ Statistics importé avec succès');
 
           console.log('📦 Test import ProjectManager...');
-          const ProjectManagerModule = await import('./components/ProjectManager');
+          const ProjectManagerModule = await import('./components/Project/ProjectManager');
           console.log('✅ ProjectManager importé avec succès');
 
-          setStep('Test des services LowDB...');
+          setStep('Test des services DB...');
 
           console.log('🗄️ Test import database service...');
-          const databaseModule = await import('./services/database');
+          const databaseModule = await import('./services/firebaseService');
           console.log('✅ Database service importé');
-
-          console.log('🗄️ Test import task service...');
-          const taskServiceModule = await import('./services/taskService');
-          console.log('✅ Task service importé');
-
-          console.log('🗄️ Test import project service...');
-          const projectServiceModule = await import('./services/projectService');
-          console.log('✅ Project service importé');
 
         } catch (importError) {
           console.error('❌ Erreur d\'import:', importError);
