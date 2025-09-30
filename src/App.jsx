@@ -43,6 +43,7 @@ export default function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        
         setLoading(true);
 
         // Vérifier la configuration Firebase

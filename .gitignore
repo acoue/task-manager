@@ -27,3 +27,4 @@ node_modules/
 .pnp.js
 
 src/config/firebaseConfig.js
+.env.development

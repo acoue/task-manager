@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Plus, Calendar, BarChart3, Settings, Trash2, Ed
 
 const Header = ({ view, onViewChange, onOpenProjectModal }) => (
   <header className="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h1 className="text-3xl font-bold text-gray-800 mb-4">Gestion de Projet</h1>
+    <h1 className="text-2xl font-bold text-gray-800 mb-4">Gestion de Projet</h1>
 
     <div className="flex gap-2 flex-wrap">
       <button
