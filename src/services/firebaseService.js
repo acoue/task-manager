@@ -15,10 +15,20 @@ import {
   doc,
   query,
   where,
-  orderBy
+  orderBy,
+  onSnapshot
 } from 'firebase/firestore';
 
-class FirebaseService {
+
+// Collections
+const PROJETS_COLLECTION = 'projets';
+const INTERVENANTS_COLLECTION = 'intervenants';
+const TACHES_COLLECTION = 'tasks';
+const PROJECTS_COLLECTION = 'projects';
+const DAILY_COLLECTION = 'daily';
+
+// Service principal
+class FirebaseTaskService {
   constructor() {
     this.initialized = false;
     this.db = null;
@@ -88,7 +98,7 @@ class FirebaseService {
     // Décommentez pour Firebase
 
     try {
-      const tasksRef = collection(this.db, 'tasks');
+      const tasksRef = collection(this.db, TACHES_COLLECTION);
       const q = query(tasksRef, orderBy('date', 'desc'));
       const querySnapshot = await getDocs(q);
 
@@ -127,7 +137,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const tasksRef = collection(this.db, 'tasks');
+      const tasksRef = collection(this.db, TACHES_COLLECTION);
       const taskData = {
         ...task,
         createdAt: new Date().toISOString()
@@ -167,7 +177,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const taskRef = doc(this.db, 'tasks', id);
+      const taskRef = doc(this.db, TACHES_COLLECTION, id);
       await updateDoc(taskRef, {
         ...task,
         updatedAt: new Date().toISOString()
@@ -196,7 +206,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const taskRef = doc(this.db, 'tasks', id);
+      const taskRef = doc(this.db, TACHES_COLLECTION, id);
       await deleteDoc(taskRef);
       console.log('✅ Tâche supprimée:', id);
     } catch (error) {
@@ -222,7 +232,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const projectsRef = collection(this.db, 'projects');
+      const projectsRef = collection(this.db, PROJECTS_COLLECTION);
       const querySnapshot = await getDocs(projectsRef);
 
       return querySnapshot.docs.map(doc => ({
@@ -259,7 +269,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const projectsRef = collection(this.db, 'projects');
+      const projectsRef = collection(this.db, PROJECTS_COLLECTION);
       const projectData = {
         ...project,
         createdAt: new Date().toISOString()
@@ -298,7 +308,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const projectRef = doc(this.db, 'projects', id);
+      const projectRef = doc(this.db, PROJECTS_COLLECTION, id);
       await updateDoc(projectRef, {
         ...project,
         updatedAt: new Date().toISOString()
@@ -328,7 +338,7 @@ class FirebaseService {
     // ========== VERSION PRODUCTION ==========
 
     try {
-      const projectRef = doc(this.db, 'projects', id);
+      const projectRef = doc(this.db, PROJECTS_COLLECTION, id);
       await deleteDoc(projectRef);
       console.log('✅ Projet supprimé:', id);
     } catch (error) {
@@ -373,12 +383,12 @@ class FirebaseService {
 
     try {
       // Supprimer toutes les tâches
-      const tasksSnapshot = await getDocs(collection(this.db, 'tasks'));
+      const tasksSnapshot = await getDocs(collection(this.db, TACHES_COLLECTION));
       const deleteTasksPromises = tasksSnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deleteTasksPromises);
 
       // Supprimer tous les projets
-      const projectsSnapshot = await getDocs(collection(this.db, 'projects'));
+      const projectsSnapshot = await getDocs(collection(this.db, PROJECTS_COLLECTION));
       const deleteProjectsPromises = projectsSnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deleteProjectsPromises);
 
@@ -390,10 +400,226 @@ class FirebaseService {
       console.error('Erreur lors de la réinitialisation:', error);
       throw error;
     }
-    
+
   }
+  async ajouterProjetFirebase(projet) {
+    try {
+
+      if (!this.initialized) {
+        throw new Error('Firebase non initialisé');
+      }
+
+      const docRef = await addDoc(collection(this.db, PROJETS_COLLECTION), {
+        ...projet,
+        sousProjets: projet.sousProjets || [],
+        createdAt: new Date().toISOString()
+      });
+      return { id: docRef.id, ...projet };
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du projet:", error);
+      throw error;
+    }
+  }
+
+  async modifierProjetFirebase(id, projet) {
+    try {
+      const projetRef = doc(this.db, PROJETS_COLLECTION, id);
+      await updateDoc(projetRef, {
+        ...projet,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Erreur lors de la modification du projet:", error);
+      throw error;
+    }
+  }
+
+  async supprimerProjetFirebase(id) {
+    try {
+      await deleteDoc(doc(this.db, PROJETS_COLLECTION, id));
+    } catch (error) {
+      console.error("Erreur lors de la suppression du projet:", error);
+      throw error;
+    }
+  }
+
+  async getProjets() {
+    try {
+
+      if (!this.initialized) {
+        throw new Error('Firebase non initialisé');
+      }
+
+      const querySnapshot = await getDocs(collection(this.db, PROJETS_COLLECTION));
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Erreur lors de la récupération des projets:", error);
+      throw error;
+    }
+  }
+
+  async ecouterProjets(callback) {
+    return onSnapshot(collection(db, PROJETS_COLLECTION), (snapshot) => {
+      const projets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(projets);
+    });
+  }
+  // async ecouterProjets(callback) {
+
+
+  //   if (!this.initialized) {
+  //     throw new Error('Firebase non initialisé');
+  //   }
+
+  //   try {
+
+  //     const projetsRef = collection(this.db, PROJECTS_COLLECTION);
+  //     const q = query(projetsRef, orderBy('createdAt', 'desc'));
+  //     const querySnapshot = await getDocs(q);
+
+  //     return querySnapshot.docs.map(doc => ({
+  //       id: doc.id,
+  //       ...doc.data()
+  //     }));
+
+  //   } catch (error) {
+  //     console.error('Erreur lors de la récupération des projets:', error);
+  //     throw error;
+  //   }
+  // }
+
+  // ========== INTERVENANTS ==========
+
+  async ajouterIntervenantFirebase(intervenant) {
+    try {
+      const docRef = await addDoc(collection(this.db, INTERVENANTS_COLLECTION), {
+        ...intervenant,
+        notifications: intervenant.notifications || [],
+        createdAt: new Date().toISOString()
+      });
+      return { id: docRef.id, ...intervenant };
+
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'intervenant:", error);
+      throw error;
+    }
+  }
+
+  async supprimerIntervenantFirebase(id) {
+    try {
+      await deleteDoc(doc(this.db, INTERVENANTS_COLLECTION, id));
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'intervenant:", error);
+      throw error;
+    }
+  }
+
+  async getIntervenants() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, INTERVENANTS_COLLECTION));
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Erreur lors de la récupération des intervenants:", error);
+      throw error;
+    }
+  }
+
+  async ecouterIntervenants(callback) {
+    return onSnapshot(collection(this.db, INTERVENANTS_COLLECTION), (snapshot) => {
+      const intervenants = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(intervenants);
+    });
+  }
+
+  async modifierIntervenantFirebase(id, intervenant) {
+    try {
+      const intervenantRef = doc(this.db, INTERVENANTS_COLLECTION, id);
+      await updateDoc(intervenantRef, {
+        ...intervenant,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Erreur lors de la modification de l'intervenant:", error);
+      throw error;
+    }
+  }
+
+
+
+
+  async getDailyTasks() {
+    if (!this.initialized) {
+      throw new Error('Firebase non initialisé');
+    }
+    try {
+
+      if (!this.initialized) {
+        throw new Error('Firebase non initialisé');
+      }
+
+      const querySnapshot = await getDocs(collection(this.db, DAILY_COLLECTION));
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Erreur lors de la récupération des tâches: daily", error);
+      throw error;
+    }
+  }
+
+  async addDailyTask(task) {
+    if (!this.initialized) {
+      throw new Error('Firebase non initialisé');
+    }
+    try {
+      const tasksRef = collection(this.db, DAILY_COLLECTION);
+      const taskData = {
+        ...task,
+        createdAt: new Date().toISOString()
+      };
+      const docRef = await addDoc(tasksRef, taskData);
+      console.log('✅ Tâche Daily ajoutée avec ID:', docRef.id);
+      return { id: docRef.id, ...taskData };
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la tâche:', error);
+      throw error;
+    }
+  };
+
+  // Mettre à jour une tâche
+  async updateDailyTask(firebaseId, updates) {
+    if (!this.initialized) {
+      throw new Error('Firebase non initialisé');
+    }
+    try {
+      const taskRef = doc(this.db, DAILY_COLLECTION, firebaseId);
+      await updateDoc(taskRef, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+      console.log('✅ Tâche Daily mise à jour:', firebaseId);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche Daily:', error);
+      throw error;
+    }
+  };
+  // Supprimer une tâche
+  async deleteDailyTask(firebaseId) {
+    if (!this.initialized) {
+      throw new Error('Firebase non initialisé');
+    }
+    try {
+      const taskRef = doc(this.db, DAILY_COLLECTION, firebaseId);
+      await deleteDoc(taskRef);
+      console.log('✅ Tâche Daily supprimée:', firebaseId);
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la tâche Daily:', error);
+      throw error;
+    }
+  };
+
+
 }
 
 // Export d'une instance unique (Singleton)
-export const firebaseService = new FirebaseService();
-export default FirebaseService;
+export const firebaseTaskService = new FirebaseTaskService();
+export default FirebaseTaskService;
+

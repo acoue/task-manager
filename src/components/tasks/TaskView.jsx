@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus, Calendar, BarChart3, Settings, Trash2, Edit2, AlertCircle } from 'lucide-react';
+import React from 'react';
+import { Plus } from 'lucide-react';
 import DayAccordion from './DayAccordion';
 
 const TasksView = ({
@@ -51,7 +51,7 @@ const TasksView = ({
 
         <button
           onClick={onAddTask}
-          className="w-full flex items-center justify-center gap-2 px-3 py-1 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors"
+          className="w-4xl mx-auto mt-6 flex items-center justify-center gap-2 px-3 py-1 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors"
         >
           <Plus className="w-5 h-5" />
           Ajouter une tâche

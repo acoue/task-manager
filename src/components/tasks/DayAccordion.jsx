@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus, Calendar, BarChart3, Settings, Trash2, Edit2, AlertCircle } from 'lucide-react';
+import React, { useState,  } from 'react';
+import { ChevronDown, ChevronUp, Calendar } from 'lucide-react';
 import TaskCard from './TaskCard';
 
 const DayAccordion = ({ date, tasks, projects, onUpdateTask, onDeleteTask }) => {

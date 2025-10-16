@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus, Calendar, BarChart3, Settings, Trash2, Edit2, AlertCircle } from 'lucide-react';
+import React from 'react';
+import {  Calendar, BarChart3, Settings} from 'lucide-react';
 
-const Header = ({ view, onViewChange, onOpenProjectModal }) => (
+const HeaderTask = ({ view, onViewChange, onOpenProjectModal }) => (
   <header className="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h1 className="text-2xl font-bold text-gray-800 mb-4">Gestion de Projet</h1>
+    <h1 className="text-2xl font-bold text-gray-800 mb-4">Gestion des tâches</h1>
 
     <div className="flex gap-2 flex-wrap">
       <button
@@ -35,4 +35,4 @@ const Header = ({ view, onViewChange, onOpenProjectModal }) => (
   </header>
 );
 
-export default Header;
+export default HeaderTask;
