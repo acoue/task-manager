@@ -9,6 +9,7 @@ import {
   getFirestore,
   collection,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -459,7 +460,7 @@ class FirebaseTaskService {
   }
 
   async ecouterProjets(callback) {
-    return onSnapshot(collection(db, PROJETS_COLLECTION), (snapshot) => {
+    return onSnapshot(collection(this.db, PROJETS_COLLECTION), (snapshot) => {
       const projets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       callback(projets);
     });
@@ -585,31 +586,32 @@ class FirebaseTaskService {
   };
 
   // Mettre à jour une tâche
-  async updateDailyTask(firebaseId, updates) {
+  async updateDailyTask(id, updates) {
     if (!this.initialized) {
       throw new Error('Firebase non initialisé');
     }
     try {
-      const taskRef = doc(this.db, DAILY_COLLECTION, firebaseId);
+      const taskRef = doc(this.db, DAILY_COLLECTION, id);
+      
       await updateDoc(taskRef, {
         ...updates,
         updatedAt: new Date().toISOString()
       });
-      console.log('✅ Tâche Daily mise à jour:', firebaseId);
+      console.log('✅ Tâche Daily mise à jour:', id);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche Daily:', error);
       throw error;
     }
   };
   // Supprimer une tâche
-  async deleteDailyTask(firebaseId) {
+  async deleteDailyTask(id) {
     if (!this.initialized) {
       throw new Error('Firebase non initialisé');
     }
     try {
-      const taskRef = doc(this.db, DAILY_COLLECTION, firebaseId);
+      const taskRef = doc(this.db, DAILY_COLLECTION, id);
       await deleteDoc(taskRef);
-      console.log('✅ Tâche Daily supprimée:', firebaseId);
+      console.log('✅ Tâche Daily supprimée:', id);
     } catch (error) {
       console.error('Erreur lors de la suppression de la tâche Daily:', error);
       throw error;

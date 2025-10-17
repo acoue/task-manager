@@ -75,7 +75,7 @@ export default function AppDaily({ onRetour }) {
   };
 
 
-  const handleAddTask = async() => {
+  const handleAddTask = async () => {
     if (formData.label.trim()) {
       firebaseTaskService.addDailyTask({
         label: formData.label,
@@ -90,6 +90,7 @@ export default function AppDaily({ onRetour }) {
   };
 
   const handleUpdateStatus = async (firebaseId, status) => {
+
     await firebaseTaskService.updateDailyTask(firebaseId, { status });
     await loadData();
   };
@@ -106,6 +107,16 @@ export default function AppDaily({ onRetour }) {
       comment: editData.comment
     });
     setEditingId(null);
+    await loadData();
+  };
+
+  const startEditing = (task) => {
+    setEditingId(task.firebaseId);  // ← Utilisez firebaseId
+    setEditData({
+      label: task.label,
+      urgency: task.urgency,
+      comment: task.comment
+    });
   };
 
   const cancelEdit = () => {
@@ -122,7 +133,7 @@ export default function AppDaily({ onRetour }) {
         <h4 className="font-semibold flex-1 pr-2">{task.label}</h4>
         <div className="flex gap-2 flex-shrink-0">
           <button
-            onClick={() => handleSaveEdit(task)}
+            onClick={() => startEditing(task)}
             className="text-blue-600 hover:text-blue-800"
           >
             <Edit2 size={16} />
@@ -211,7 +222,7 @@ export default function AppDaily({ onRetour }) {
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault();
-        const taskId = parseInt(e.dataTransfer.getData('taskId'));
+        const taskId = e.dataTransfer.getData('taskId');
         handleUpdateStatus(taskId, status);
       }}
     >
@@ -317,7 +328,7 @@ export default function AppDaily({ onRetour }) {
           />
         </div>
 
-        {/* Résumé */}
+        {/* Résumé
         <div className="mt-8 bg-white rounded-lg shadow p-4">
           <div className="flex justify-around text-center">
             <div>
@@ -333,11 +344,13 @@ export default function AppDaily({ onRetour }) {
               <p className="text-gray-600">Terminé</p>
             </div>
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {editingId !== null && (
-        <EditTaskModal task={tasks.find(t => t.id === editingId)} />
+        <EditTaskModal
+          task={tasks.find(t => t.firebaseId === editingId)}  // ← Cherchez par firebaseId
+        />
       )}
     </div>
   );
