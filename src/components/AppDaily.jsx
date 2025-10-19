@@ -269,7 +269,6 @@ export default function AppDaily({ onRetour }) {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
           Gestionnaire de Tâches
         </h1>
-        <p className="text-gray-600 mb-8">Organisez votre journée de travail</p>
 
         {/* Formulaire d'ajout */}
         <div className="bg-white rounded-lg shadow-lg p-4 mb-8">
